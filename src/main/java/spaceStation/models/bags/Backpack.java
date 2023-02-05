@@ -14,6 +14,6 @@ public class Backpack implements Bag{
 
     @Override
     public Collection<String> getItems() {
-        return Collections.unmodifiableCollection(items);
+        return items;
     }
 }

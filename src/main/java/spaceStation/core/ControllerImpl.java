@@ -5,10 +5,15 @@ import spaceStation.models.astronauts.Biologist;
 import spaceStation.models.astronauts.Geodesist;
 import spaceStation.models.astronauts.Meteorologist;
 import spaceStation.models.bags.Backpack;
-import spaceStation.models.planets.Planet;
 import spaceStation.models.planets.PlanetImpl;
 import spaceStation.repositories.AstronautRepository;
 import spaceStation.repositories.PlanetRepository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static spaceStation.common.ConstantMessages.*;
 import static spaceStation.common.ExceptionMessages.*;
@@ -17,12 +22,12 @@ public class ControllerImpl implements Controller {
 
     private AstronautRepository astronautRepository;
     private PlanetRepository planetRepository;
-    private Backpack backpack;
+    private Collection<String> items;
 
     public ControllerImpl() {
         this.astronautRepository = new AstronautRepository();
         this.planetRepository = new PlanetRepository();
-        this.backpack= new Backpack();
+        this.items = new ArrayList<>();
     }
 
     @Override
@@ -46,7 +51,11 @@ public class ControllerImpl implements Controller {
     public String addPlanet(String planetName, String... items) {
         PlanetImpl planet = new PlanetImpl(planetName);
         planetRepository.add(planet);
-        backpack.getItems().add(String.valueOf(items));
+        for (int i = 0; i < items.length; i++) {
+            String item = items[i];
+            this.items.add(items[i]);
+        }
+
         return String.format(PLANET_ADDED, planetName);
     }
 
@@ -67,11 +76,20 @@ public class ControllerImpl implements Controller {
 
     @Override
     public String explorePlanet(String planetName) {
-        return null;
+        return planetName;
     }
 
     @Override
     public String report() {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(REPORT_ASTRONAUT_INFO).append(System.lineSeparator());
+        List<Astronaut> astronauts = astronautRepository.getModels().stream().collect(Collectors.toList());
+        for (Astronaut astronaut : astronauts) {
+            sb.append(String.format(REPORT_ASTRONAUT_NAME, astronaut.getName())).append(System.lineSeparator());
+            sb.append(String.format(REPORT_ASTRONAUT_OXYGEN, astronaut.getOxygen())).append(System.lineSeparator());
+            sb.append(String.format(REPORT_ASTRONAUT_BAG_ITEMS,
+                    String.join(REPORT_ASTRONAUT_BAG_ITEMS_DELIMITER, astronaut.getBag().getItems()))).append(System.lineSeparator());
+        }
+        return sb.toString().trim();
     }
 }
