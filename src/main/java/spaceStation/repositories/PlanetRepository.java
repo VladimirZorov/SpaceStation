@@ -21,16 +21,31 @@ public class PlanetRepository implements Repository<Planet>{
 
     @Override
     public void add(Planet planet) {
-
+        boolean planetExist = false;
+        for (Planet planet1 : planets) {
+            if (planet1.getName().equals(planet.getName())) {
+                planetExist = true;
+            }
+        }
+        if (!planetExist) {
+            planets.add(planet);
+        }
     }
 
     @Override
     public boolean remove(Planet planet) {
+        for (Planet planet1 : planets) {
+            if (planet1.equals(planet)) {
+                planets.remove(planet);
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public Planet findByName(String name) {
-        return null;
+        return planets.stream().filter(planet -> planet.getName().equals(name))
+                .findFirst().orElse(null);
     }
 }
