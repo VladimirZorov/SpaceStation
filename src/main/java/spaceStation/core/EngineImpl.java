@@ -67,22 +67,22 @@ public class EngineImpl implements Engine {
     }
 
     private String retireAstronaut(String[] data) {
-        return null;
+        return controller.retireAstronaut(data[0]);
     }
 
     private String report() {
-        return null;
+        return controller.report();
     }
 
     private String explorePlanet(String[] data) {
-        return null;
+        return controller.explorePlanet(data[0]);
     }
 
     private String addPlanet(String[] data) {
-        return null;
+        return controller.addPlanet(data[0]);
     }
 
     private String addAstronaut(String[] data) {
-        return null;
+        return controller.addAstronaut(data[0], data[1]);
     }
 }

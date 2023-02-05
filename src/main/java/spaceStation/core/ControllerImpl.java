@@ -6,6 +6,7 @@ import spaceStation.models.astronauts.Geodesist;
 import spaceStation.models.astronauts.Meteorologist;
 import spaceStation.models.bags.Backpack;
 import spaceStation.models.planets.Planet;
+import spaceStation.models.planets.PlanetImpl;
 import spaceStation.repositories.AstronautRepository;
 import spaceStation.repositories.PlanetRepository;
 
@@ -17,6 +18,12 @@ public class ControllerImpl implements Controller {
     private AstronautRepository astronautRepository;
     private PlanetRepository planetRepository;
     private Backpack backpack;
+
+    public ControllerImpl() {
+        this.astronautRepository = new AstronautRepository();
+        this.planetRepository = new PlanetRepository();
+        this.backpack= new Backpack();
+    }
 
     @Override
     public String addAstronaut(String type, String astronautName) {
@@ -37,14 +44,25 @@ public class ControllerImpl implements Controller {
 
     @Override
     public String addPlanet(String planetName, String... items) {
-        Planet planet = new Planet(planetName);
+        PlanetImpl planet = new PlanetImpl(planetName);
         planetRepository.add(planet);
+        backpack.getItems().add(String.valueOf(items));
         return String.format(PLANET_ADDED, planetName);
     }
 
     @Override
     public String retireAstronaut(String astronautName) {
-        return null;
+        boolean astronautExist = false;
+        for (Astronaut astronaut : astronautRepository.getModels()) {
+            if (astronaut.getName().equals(astronautName)) {
+                astronautExist = true;
+            }
+            if (astronautExist) {
+                astronautRepository.remove(astronaut);
+                return String.format(ASTRONAUT_RETIRED, astronautName);
+            }
+        }
+        return String.format(ASTRONAUT_DOES_NOT_EXIST, astronautName);
     }
 
     @Override
